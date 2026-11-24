@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+# Defaults only: pull_data.py sets these from its DIRECTORIES section at import time.
 ROOT = Path(__file__).resolve().parent
 RAW_DIR = ROOT / "data" / "raw"
 PROCESSED_DIR = ROOT / "data" / "processed"

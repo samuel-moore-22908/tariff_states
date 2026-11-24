@@ -42,6 +42,25 @@ from urllib3.util.retry import Retry
 
 import config
 
+# =============================================================================
+# DIRECTORIES: edit these when moving the code to another machine
+# =============================================================================
+# PROJECT_DIR  folder holding this script, config.py and (by default) the .env file
+# DATA_DIR     where downloads and outputs go (can be outside the repo, e.g. a shared drive)
+# RAW_DIR      cached raw API/file responses, one subfolder per source
+# PROCESSED_DIR  final panel, data dictionary, reports
+# ENV_FILE     KEY=VALUE file with API keys and CONTACT_EMAIL. --env-file and $ENV_FILE
+#              still take precedence over this setting.
+PROJECT_DIR = Path(r"C:\Users\smoor\GitHub\tariff_states")
+DATA_DIR = Path(r"C:\Users\smoor\GitHub\tariff_states\data")
+RAW_DIR = DATA_DIR / "raw"
+PROCESSED_DIR = DATA_DIR / "processed"
+ENV_FILE = PROJECT_DIR / ".env"
+
+# Every module reads paths from config, so set them there (fred_compare.py uses these too).
+config.ROOT, config.RAW_DIR, config.PROCESSED_DIR = PROJECT_DIR, RAW_DIR, PROCESSED_DIR
+# =============================================================================
+
 log = logging.getLogger("tariff_states")
 
 TODAY = dt.date.today()
@@ -55,10 +74,11 @@ SHUTDOWN_MONTH = pd.Timestamp("2025-10-01")
 def load_dotenv(path: Path | str | None = None) -> None:
     """Load KEY=VALUE lines from an env file without overriding variables already set
     in the environment. Names are case-insensitive; values are never logged. File used,
-    in order: the `path` argument (--env-file), $ENV_FILE, then .env in the repo root."""
-    path = Path(path or os.environ.get("ENV_FILE") or config.ROOT / ".env").expanduser()
+    in order: the `path` argument (--env-file), $ENV_FILE, then ENV_FILE set at the top of
+    this script."""
+    path = Path(path or os.environ.get("ENV_FILE") or ENV_FILE).expanduser()
     if not path.exists():
-        if path != config.ROOT / ".env":
+        if path != ENV_FILE:
             raise SystemExit(f"env file not found: {path}")
         return
     log.info("reading keys from %s", path)

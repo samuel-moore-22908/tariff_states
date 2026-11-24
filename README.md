@@ -20,9 +20,21 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+### Directories
+
+On a new machine, edit the `DIRECTORIES` section at the top of `pull_data.py`:
+
+| Setting | Default on the original machine |
+|---|---|
+| `PROJECT_DIR` | `C:\Users\smoor\GitHub\tariff_states` |
+| `DATA_DIR` | `PROJECT_DIR\data` (raw cache in `RAW_DIR`, outputs in `PROCESSED_DIR`) |
+| `ENV_FILE` | `PROJECT_DIR\.env` |
+
+`fred_compare.py` uses the same settings.
+
 ### Keys and contact email
 
-The pipeline reads these from environment variables, or from an env file of `KEY=VALUE` lines. It uses `--env-file PATH` if given, otherwise the file named in `$ENV_FILE`, otherwise `.env` in the repo root (gitignored). Variables already set in the environment take precedence over the file:
+The pipeline reads these from environment variables, or from an env file of `KEY=VALUE` lines. It uses `--env-file PATH` if given, otherwise the file named in `$ENV_FILE`, otherwise `ENV_FILE` from the directories section (`.env` in the repo root by default, gitignored). Variables already set in the environment take precedence over the file:
 
 ```
 BLS_API_KEY=...        # required: https://data.bls.gov/registrationEngine/
