@@ -134,6 +134,9 @@ LAUS_MEASURES = {
 CES_INDUSTRIES = {
     "00000000": ("total_nonfarm", "Total nonfarm"),
     "05000000": ("total_private", "Total private"),
+    # Mining, logging, and construction: published for every state, while construction alone
+    # (20000000) isn't published for DE, DC and HI (sm.series, checked 2026-11-24).
+    "15000000": ("mlc", "Mining, logging, and construction"),
     "20000000": ("construction", "Construction"),
     "30000000": ("mfg", "Manufacturing"),
     "31000000": ("mfg_durable", "Durable goods manufacturing"),
