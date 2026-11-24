@@ -5,7 +5,7 @@ A re-runnable pipeline that builds a tidy **state × month panel** (50 states + 
 | Source | What | SA? |
 |---|---|---|
 | BLS LAUS | unemployment rate, unemployed, employed, labor force | SA |
-| BLS CES State & Area | payroll jobs: total nonfarm, private, construction, manufacturing (durable, nondurable), wholesale, retail, transportation/warehousing/utilities (43000000), transportation & warehousing (43400089) | SA (NSA fallback where SA isn't published; 43400089 is NSA-only) |
+| BLS CES State & Area | payroll jobs: total nonfarm, private, mining/logging/construction, construction, manufacturing (durable, nondurable), wholesale, retail, transportation/warehousing/utilities (43000000), transportation & warehousing (43400089) | SA (NSA fallback where SA isn't published; 43400089 is NSA-only) |
 | BLS JOLTS (state) | job openings, layoffs & discharges: levels and rates | SA |
 | BLS CPI-U | Census division and region indexes, U.S. city average, and a state proxy 12-month inflation rate | NSA (US SA for reference) |
 | Census BFS | business applications (BA, HBA, WBA, CBA) and formations (BF) | SA and NSA |
@@ -88,6 +88,7 @@ Dates are the first of the month. Missing months are never interpolated or fille
 ## Notes on the data
 
 * **CES NSA fallback.** BLS doesn't publish every state × industry series seasonally adjusted. In that case the NSA series (`SMU…`) goes in a separate `emp_<industry>_nsa` column, and the SA column stays NaN for that state. `missing_report.csv` notes which states this applies to.
+* **Construction in DE, DC and HI.** BLS doesn't publish construction (`20000000`) for these three, only the combined mining, logging and construction series (`15000000`), so `emp_construction_sa` is NaN there. `emp_mlc_sa` (mining, logging and construction) covers all 51 states. It's defined in the "Series added on top of config.py" section of `pull_data.py`.
 * **CPI proxy.** BLS has no state CPIs. `cpi_state_proxy_yoy` is the 12-month % change of the state's Census division index where that change exists (division indexes start Dec 2017 = 100, so from Dec 2018), otherwise the change of its Census region index. `cpi_state_proxy_yoy_source` says which. Index levels with different bases are never spliced.
 * **2025 federal funding lapse.** Several BLS series have no October 2025 value (footnote `X`). Those months stay NaN, and the CPI 12-month change for October 2026 is also NaN because its base month is missing.
 * **BFS.** The Census BFS API (`timeseries/eits/bfs`) only serves national data, so state data come from the monthly CSV `https://www.census.gov/econ/bfs/csv/bfs_monthly.csv`. Cells marked `D` (suppressed) are NaN. Actual formations (`BF_BF4Q`, `BF_BF8Q`) are only final with a lag, so they end earlier than the applications series.

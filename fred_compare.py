@@ -41,8 +41,8 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 
-import config
-import pull_data as pdm
+import pull_data as pdm  # first: it sets the project directories and makes config importable
+import config  # noqa: E402
 
 log = logging.getLogger("fred_compare")
 

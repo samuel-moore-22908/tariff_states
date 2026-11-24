@@ -40,8 +40,6 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-import config
-
 # =============================================================================
 # DIRECTORIES: edit these when moving the code to another machine
 # =============================================================================
@@ -57,8 +55,30 @@ RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 ENV_FILE = PROJECT_DIR / ".env"
 
+# Make config.py importable even when Python's working directory isn't the project folder
+# (IDE consoles, notebooks, running from another directory).
+if str(PROJECT_DIR) not in sys.path:
+    sys.path.insert(0, str(PROJECT_DIR))
+import config  # noqa: E402
+
 # Every module reads paths from config, so set them there (fred_compare.py uses these too).
 config.ROOT, config.RAW_DIR, config.PROCESSED_DIR = PROJECT_DIR, RAW_DIR, PROCESSED_DIR
+# =============================================================================
+
+
+# =============================================================================
+# Series added on top of config.py
+# =============================================================================
+# CES "Mining, logging, and construction" (15000000): BLS publishes it for every state, while
+# construction alone (20000000) isn't published for DE, DC and HI (checked in sm.series,
+# 2026-11-24). Adds emp_mlc_sa (and emp_mlc_nsa, used only as a fallback), placed after total
+# private. If config.CES_INDUSTRIES already has the code, this does nothing.
+if "15000000" not in config.CES_INDUSTRIES:
+    _ces = list(config.CES_INDUSTRIES.items())
+    _at = [k for k, _ in _ces].index("05000000") + 1
+    _ces.insert(_at, ("15000000", ("mlc", "Mining, logging, and construction")))
+    config.CES_INDUSTRIES = dict(_ces)
+    config.VARIABLES = config._build_variables()  # data dictionary / missing report pick it up
 # =============================================================================
 
 log = logging.getLogger("tariff_states")
